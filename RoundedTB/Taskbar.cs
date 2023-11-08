@@ -10,8 +10,9 @@ using System.Windows;
 using System.Windows.Threading;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
-
-
+using System.Windows.Forms;
+using System.Windows.Media;
+using System.Runtime.InteropServices;
 
 namespace RoundedTB
 {
@@ -246,6 +247,48 @@ namespace RoundedTB
 
                 centredDistanceFromEdge = taskbar.TaskbarRect.Right - taskbar.AppListRect.Right - Convert.ToInt32(2 * taskbar.ScaleFactor);
 
+                Tasklist tasklist = new Tasklist();
+                tasklist.Update();
+
+                List<Tasklist.TasklistButton> buttons = tasklist.GetButtons();
+
+                Tasklist.TasklistButton rightmostButton = null;
+                Tasklist.TasklistButton leftmostButton = null;
+                foreach (var button in buttons)
+                {
+                    if (rightmostButton == null || button.x > rightmostButton.x)
+                    {
+                        rightmostButton = button;
+                    }
+
+                    if (leftmostButton == null || button.x < leftmostButton.x)
+                    {
+                        leftmostButton = button;
+                    }
+                }
+
+                if (rightmostButton != null)
+                {
+                    Debug.WriteLine("Rightmost Button Name: " + rightmostButton.name);
+                    Debug.WriteLine("X-coordinate: " + rightmostButton.x);
+                    Debug.WriteLine("Y-coordinate: " + rightmostButton.y);
+                    Debug.WriteLine("Width: " + rightmostButton.width);
+                    Debug.WriteLine("Height: " + rightmostButton.height);
+                }
+                else
+                {
+                    Debug.WriteLine("No buttons found.");
+                }
+
+                //int totalWidth = buttons.Sum(button => button.width); Sum of width of all apps in the taskbar
+
+                centredDistanceFromEdge = taskbar.TaskbarRect.Right - rightmostButton.x - rightmostButton.width; //Right-most calculation (only works for grouped)
+
+
+                centredDistanceFromEdge = leftmostButton.x - leftmostButton.width; //Left-most calculation (Works for grouped and ungrouped)
+
+
+
                 // If on Windows 10, add an extra 20 logical pixels for the grabhandle
                 if (!settings.IsWindows11)
                 {
@@ -255,6 +298,8 @@ namespace RoundedTB
                 // Create region for if the taskbar is centred by take the right-to-right distance (centredDistanceFromEdge) off from both sides, as well as the margin
                 if (settings.IsCentred)
                 {
+
+
                     mainRegion = LocalPInvoke.CreateRoundRectRgn(
                         centredDistanceFromEdge + centredEffectiveRegion.Left,
                         centredEffectiveRegion.Top,
@@ -432,6 +477,7 @@ namespace RoundedTB
 
             IntPtr hwndMain = LocalPInvoke.FindWindowExA(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null); // Find main taskbar
             LocalPInvoke.GetWindowRect(hwndMain, out LocalPInvoke.RECT rectMain); // Get the RECT of the main taskbar
+
             IntPtr hrgnMain = IntPtr.Zero; // Set recovery region to IntPtr.Zero
             IntPtr hwndTray = LocalPInvoke.FindWindowExA(hwndMain, IntPtr.Zero, "TrayNotifyWnd", null); // Get handle to the main taskbar's tray
             LocalPInvoke.GetWindowRect(hwndTray, out LocalPInvoke.RECT rectTray); // Get the RECT for the main taskbar's tray

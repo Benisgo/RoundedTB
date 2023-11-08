@@ -114,7 +114,7 @@ namespace RoundedTB
                             // Get the latest quick details of this taskbar
                             Types.Taskbar newTaskbar = Taskbar.GetQuickTaskbarRects(taskbars[current].TaskbarHwnd, taskbars[current].TrayHwnd, taskbars[current].AppListHwnd);
 
-
+                            
                             // If the taskbar's monitor has a maximised window, reset it so it's "filled"
                             if (Taskbar.TaskbarShouldBeFilled(taskbars[current].TaskbarHwnd, settings))
                             {
@@ -124,7 +124,7 @@ namespace RoundedTB
                                     taskbars[current].Ignored = true;
                                 }
                                 continue;
-                            }
+                            } 
 
                             // Showhide tray on hover
                             if (settings.ShowSegmentsOnHover)
@@ -268,7 +268,7 @@ namespace RoundedTB
                                 {
                                     if (Taskbar.CheckDynamicUpdateIsValid(taskbars[current], newTaskbar))
                                     {
-                                        // Add the rect changes to the temporary list of taskbars
+                                    // Add the rect changes to the temporary list of taskbars
                                         taskbars[current].TaskbarRect = newTaskbar.TaskbarRect;
                                         taskbars[current].AppListRect = newTaskbar.AppListRect;
                                         taskbars[current].TrayRect = newTaskbar.TrayRect;

@@ -151,6 +151,7 @@ namespace RoundedTB
             {
                 activeSettings.IsWindows11 = false;
             }
+
             // Default settings
             if (activeSettings == null)
             {
